@@ -19,7 +19,7 @@ function preventDeath<T extends typeof commands[keyof typeof commands]>(command:
 const updateCommand = preventDeath(commands.update);
 const clearCommand = preventDeath(commands.clear);
 
-yargs
+const { argv } = yargs
 	.option('watch', {
 		describe: 'The number of minutes to wait between updates',
 		requiresArg: true,
@@ -72,3 +72,5 @@ yargs
 	.demandCommand(1, 1)
 	.strict()
 	.help();
+
+console.log(argv);

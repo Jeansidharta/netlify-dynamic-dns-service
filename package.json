@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "bin": {
-    "netlify-domain-manager": "src/cli.js"
+    "netlify-domain-manager": "build/src/cli.js"
   },
   "dependencies": {
     "node-fetch": "^2.6.1",

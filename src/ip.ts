@@ -20,7 +20,7 @@ export async function getMyIP (IPType?: 'IPV4' | 'IPV6') {
 		throw new Error(`IP call STATUS CODE ${response.status}: ${response.statusText}`);
 	}
 
-	const ip: string = await response.json().catch(() => {
+	const ip: string = await response.text().catch(() => {
 		throw new Error('Failed to parse IP response');
 	});
 
