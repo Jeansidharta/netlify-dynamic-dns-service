@@ -3,7 +3,7 @@ import { key } from '../../netlify_key.json';
 
 type RequestInitObjectBody = Omit<RequestInit, 'body'> & { body?: object };
 
-export async function netlifyFetch<T>(url: string, options?: RequestInitObjectBody): Promise<T> {
+export async function netlifyFetch<T>(url: string, options?: RequestInitObjectBody): Promise<T | null> {
 	const body = JSON.stringify(options?.body);
 
 	const newOptions: RequestInit = {
@@ -23,9 +23,11 @@ export async function netlifyFetch<T>(url: string, options?: RequestInitObjectBo
 		throw new Error(`Netlify call STATUS CODE ${response.status}: ${response.statusText}`);
 	}
 
-	const data: T = await response.json().catch(() => {
-		throw new Error('Failed to parse Netlify response');
-	});
-
-	return data;
+	if (response.headers.get('content-type') === 'application/json') {
+		return await response.json().catch(() => {
+			throw new Error('Failed to parse Netlify response');
+		}) as T;
+	} else {
+		return null;
+	}
 }

@@ -10,5 +10,5 @@ export async function createDNS (ip: string, hostname: string, type: DNSRecordTy
 			value: ip,
 		},
 	});
-	return data;
+	return data!;
 }
