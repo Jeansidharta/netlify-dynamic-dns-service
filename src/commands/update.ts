@@ -1,41 +1,38 @@
-import { isIPv6 } from 'net';
-
-import { getMyIPV6 } from '../ipv6';
+import { getMyIP } from '../ip';
 import { getMissingWhitelistItems, isWhitelisted } from '../config';
 import { listDNS } from '../netlify/list-dns';
 import { createDNS } from '../netlify/create-dns';
 import { deleteDNS } from '../netlify/delete-dns';
 
-export async function command () {
+export async function command (IPType?: 'IPV4' | 'IPV6') {
 	console.log('Checking for DNS updates...');
-	const myIPV6 = await getMyIPV6();
-	if (!myIPV6) throw new Error('IPV6 is empty');
-	if (!isIPv6(myIPV6)) throw new Error(`Invalid IPV6: ${myIPV6}`);
-
-	console.log('My IPV6 is ' + myIPV6);
+	const myIP = await getMyIP(IPType);
+	console.log(`My ${IPType || 'IP'} is ${myIP}`);
 	const dnsList = await listDNS();
 
-	dnsList.forEach(async record => {
-		const { value: recordIP, hostname, id: recordId } = record;
-
-		// only work on whitelisted items
-		if (!isWhitelisted(hostname)) return;
-
-		if (recordIP === myIPV6) {
-			console.log(hostname + '\'s IP is up to date.');
-			return;
+	/** determines which DNS records should be updated */
+	const dnsToUpdate = dnsList.filter(record => {
+		if (!isWhitelisted(record.hostname)) return false;
+		if (record.value === myIP) {
+			console.log(record.hostname + '\'s IP is up to date.');
+			return false;
 		}
+		return true;
+	});
+
+	dnsToUpdate.forEach(async ({ hostname, id: recordId }) => {
 		console.log(hostname + '\'s IP is incorrect. Updating...');
 		await deleteDNS(recordId);
-		await createDNS(myIPV6, hostname);
+		await createDNS(myIP, hostname);
 		console.log(hostname + ' was successfuly updated');
 	});
 
 	const missingHostnames = getMissingWhitelistItems(dnsList.map(record => record.hostname));
 
-	missingHostnames.forEach(async item => {
-		console.log(item + ' was missing. Creating...');
-		await createDNS(myIPV6, item);
-		console.log(item + ' was created successfuly');
+	missingHostnames.forEach(async hostname => {
+		console.log(hostname + ' was missing. Creating...');
+		const type = IPType === 'IPV6' ? 'AAAA' : 'A';
+		await createDNS(myIP, hostname, type);
+		console.log(hostname + ' was created successfuly');
 	});
 }

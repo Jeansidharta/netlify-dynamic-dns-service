@@ -1,10 +1,12 @@
+export type DNSRecordType = 'A' | 'AAAA' | 'ALIAS' | 'CAA' | 'CNAME' | 'MX' | 'NS' | 'SPF' | 'SRV' | 'TXT' | 'NETLIFY';
+
 /** All `unknown` values are things I don't know what should be, at the time of writing */
 export type DNSRecord = {
 	/** @example 'www.google.com' */
 	hostname: string,
 
 	/** The DNS record type */
-	type: 'A' | 'AAAA' | 'ALIAS' | 'CAA' | 'CNAME' | 'MX' | 'NS' | 'SPF' | 'SRV' | 'TXT' | 'NETLIFY',
+	type: DNSRecordType,
 
 	/** The "Time to live" of the DNS record on caches, in seconds */
 	ttl: number,

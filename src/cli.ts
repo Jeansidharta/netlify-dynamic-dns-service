@@ -3,29 +3,63 @@
 import * as commands from './commands';
 import yargs from 'yargs';
 
+function preventDeath<T extends typeof commands[keyof typeof commands]>(command: T) : T {
+	const unkillableCommand = (...args: any) => {
+		try {
+			return command(...args);
+		} catch (e: any) {
+			console.error(e.message);
+			return null;
+		}
+	}
+
+	return unkillableCommand as T;
+}
+
+const updateCommand = preventDeath(commands.update);
+const clearCommand = preventDeath(commands.clear);
+
 yargs
 	.option('watch', {
 		describe: 'The number of minutes to wait between updates',
 		requiresArg: true,
 		number: true,
 	})
+	.option('ipv4', {
+		describe: 'Indicates that IPV4 should be used',
+		requiresArg: false,
+		boolean: true,
+	})
+	.option('ipv6', {
+		describe: 'Indicates that IPV6 should be used',
+		requiresArg: false,
+		boolean: true,
+	})
 	.command(
 		'update',
 		'updates all whitelisted hostnames to the current IP address',
 		({ argv }) => {
+			const IPType = (
+				argv.ipv6 ? 'IPV6' :
+				argv.ipv4 ? 'IPV4' :
+				'IPV6'
+			);
+
+			console.log(`Updating records to ${IPType}`);
+
 			if (argv.watch) {
 				console.log(`Watch mode enabled. Will update every ${argv.watch} minutes`);
-				setInterval(commands.update, argv.watch * 1000 * 60);
+				setInterval(() => updateCommand(IPType), argv.watch * 1000 * 60);
 			}
-			commands.update();
+			updateCommand(IPType);
 		}
 	)
 	.command(
 		'clear',
 		'deletes all whitelisted hostnames',
 		({ argv }) => {
-			commands.clear();
-			if (argv.watch) setInterval(commands.clear, argv.watch * 1000 * 60);
+			clearCommand();
+			if (argv.watch) setInterval(clearCommand, argv.watch * 1000 * 60);
 		}
 	)
 	.check(argv => {
