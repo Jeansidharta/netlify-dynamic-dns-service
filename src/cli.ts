@@ -73,4 +73,4 @@ const { argv } = yargs
 	.strict()
 	.help();
 
-console.log(argv);
+if (false) console.log(argv);

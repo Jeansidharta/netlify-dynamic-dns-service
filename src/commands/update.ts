@@ -5,7 +5,7 @@ import { createDNS } from '../netlify/create-dns';
 import { deleteDNS } from '../netlify/delete-dns';
 
 export async function command (IPType?: 'IPV4' | 'IPV6') {
-	console.log('Checking for DNS updates...');
+	console.log('Fetching my IP...');
 	const myIP = await getMyIP(IPType);
 	console.log(`My ${IPType || 'IP'} is ${myIP}`);
 	const dnsList = await listDNS();
