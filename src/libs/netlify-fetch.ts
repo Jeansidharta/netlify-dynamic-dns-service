@@ -11,6 +11,7 @@ export async function netlifyFetch<T>(url: string, options?: RequestInitObjectBo
 		body,
 		headers: {
 			...options?.headers,
+			'Content-Type': 'application/json',
 			authorization: 'Bearer ' + key,
 		}
 	}
@@ -20,10 +21,10 @@ export async function netlifyFetch<T>(url: string, options?: RequestInitObjectBo
 	});
 
 	if (!response.ok) {
-		throw new Error(`Netlify call STATUS CODE ${response.status}: ${response.statusText}`);
+		throw new Error(`Netlify CALL STATUS CODE ${response.status}: ${response.statusText}`);
 	}
 
-	if (response.headers.get('content-type') === 'application/json') {
+	if (response.headers.get('content-type')?.startsWith('application/json')) {
 		return await response.json().catch(() => {
 			throw new Error('Failed to parse Netlify response');
 		}) as T;
