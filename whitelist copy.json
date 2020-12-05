@@ -1,0 +1,9 @@
+{
+	"whitelist": [
+		"dev.sidharta.xyz",
+      "ssh.sidharta.xyz",
+		"dns-manager.sidharta.xyz",
+		"login.sidharta.xyz",
+		"sidharta.xyz"
+	]
+}

@@ -1,5 +1,5 @@
 import fetch, { RequestInit } from 'node-fetch';
-import { key } from '../../netlify_key.json';
+import { key } from '../netlify_key.json';
 
 type RequestInitObjectBody = Omit<RequestInit, 'body'> & { body?: object };
 

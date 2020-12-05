@@ -3,9 +3,8 @@
 
 module.exports = {
 	apps: [{
-		name: 'netlify-domain-watch',
-		script: 'build/src/cli.js',
-		args: 'update --watch 60',
+		name: 'netlify-worker-ddns',
+		script: 'build/worker/index.js',
 		watch: false,
 		cwd: require.main.id,
 		time: true,
