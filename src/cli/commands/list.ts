@@ -1,4 +1,4 @@
-import { configFile } from "../../config";
+import { configFile } from "../../libs/config";
 
 export async function list () {
 	if (!configFile) {

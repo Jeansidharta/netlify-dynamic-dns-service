@@ -1,6 +1,6 @@
 import express from 'express';
-import { command as update } from '../commands/update';
-import * as config from '../config';
+import { update } from './update';
+import * as config from '../libs/config';
 
 const app = express();
 

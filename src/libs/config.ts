@@ -1,7 +1,7 @@
 import path from 'path';
 import process from 'process';
 import { promises as fs, readFileSync, statSync, writeFileSync } from 'fs';
-import { ConfigurationFile } from './models/config';
+import { ConfigurationFile } from '../models/config';
 
 function getConfigFileLocation () {
 	return path.join(process.env.HOME as string, 'netlify-domains.json');

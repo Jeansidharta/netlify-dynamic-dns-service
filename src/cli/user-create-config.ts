@@ -1,4 +1,4 @@
-import { createConfigFile } from "../config";
+import { createConfigFile } from "../libs/config";
 import { askBooleanQuestion, askQuestion } from "../libs/question";
 
 async function askForData (): Promise<{ netlifyKey: string, domainName: string }> {

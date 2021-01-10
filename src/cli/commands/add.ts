@@ -1,4 +1,4 @@
-import * as config from '../../config';
+import * as config from '../../libs/config';
 import { workerAxiosInstance } from "../axios";
 import { tryCreatingConfigFileWithUser } from "../user-create-config";
 import { appendHostname } from "../append-hostname";

@@ -1,5 +1,5 @@
-import { netlifyFetch } from "../libs/netlify-fetch";
-import { DNSRecord, DNSRecordType } from "../models/netlify";
+import { netlifyFetch } from "../netlify-fetch";
+import { DNSRecord, DNSRecordType } from "../../models/netlify";
 
 export async function createDNS (ip: string, hostname: string, type: DNSRecordType = 'AAAA') {
 	const body = {

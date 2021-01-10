@@ -1,5 +1,5 @@
 import fetch, { RequestInit } from 'node-fetch';
-import { key } from '../netlify_key.json';
+import { configFile } from './config';
 
 type RequestInitObjectBody = Omit<RequestInit, 'body'> & { body?: object };
 
@@ -12,7 +12,7 @@ export async function netlifyFetch<T>(url: string, options?: RequestInitObjectBo
 		headers: {
 			...options?.headers,
 			'Content-Type': 'application/json',
-			authorization: 'Bearer ' + key,
+			authorization: 'Bearer ' + configFile!.netlifyKey,
 		}
 	}
 

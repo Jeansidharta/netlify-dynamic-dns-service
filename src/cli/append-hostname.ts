@@ -1,4 +1,4 @@
-import { configFile } from "../config";
+import { configFile } from "../libs/config";
 import { askBooleanQuestion } from "../libs/question";
 import { tryCreatingConfigFileWithUser } from "./user-create-config";
 

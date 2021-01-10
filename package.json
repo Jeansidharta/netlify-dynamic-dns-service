@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "ts-node-dev --transpile-only src/worker/index.ts",
+    "lint": "tsc --noEmit",
     "pm2": "npm run build && pm2 start ecosystem.config.js",
     "cli": "npm run build && npm link"
   },

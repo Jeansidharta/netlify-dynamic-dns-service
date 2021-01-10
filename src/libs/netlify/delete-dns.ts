@@ -1,4 +1,4 @@
-import { netlifyFetch } from "../libs/netlify-fetch";
+import { netlifyFetch } from "../netlify-fetch";
 
 /** If response is undefined, then no errors occurred. Otherwise, there were errors. */
 type Response = undefined | {
