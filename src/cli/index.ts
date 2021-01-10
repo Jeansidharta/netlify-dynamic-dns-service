@@ -6,6 +6,7 @@ import { remove } from './commands/remove';
 import { add } from './commands/add';
 import { list } from './commands/list';
 import { init } from './commands/init';
+import { echoIP } from './commands/echo-ip';
 
 function preventDeath(handler: Function) {
 	return async (...args: any[]) => {
@@ -45,6 +46,12 @@ const { argv } = yargs
 		'removes a specific hostname',
 		() => {},
 		preventDeath(list),
+	)
+	.command(
+		['ip'],
+		'Prints my current IPv6',
+		() => {},
+		preventDeath(echoIP),
 	)
 	.demandCommand(1, 1)
 	.strict()
