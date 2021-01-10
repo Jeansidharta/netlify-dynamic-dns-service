@@ -17,7 +17,7 @@ function preventDeath(handler: Function) {
 
 const { argv } = yargs
 	.command(
-		'update',
+		'update [hostname]',
 		'forces worker process to check for an update on all hostnames',
 		() => {},
 		preventDeath(update),

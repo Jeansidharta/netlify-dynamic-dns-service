@@ -1,7 +1,8 @@
 import axios from 'axios';
+import process from 'process';
 
 const workerProcessHostname = 'localhost';
-const workerProcessPort = 7777;
+const workerProcessPort = Number(process.env.WORKER_PORT || 7777);
 
 export const workerAxiosInstance = axios.create({
 	baseURL: `http://${workerProcessHostname}:${workerProcessPort}/`,

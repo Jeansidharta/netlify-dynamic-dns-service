@@ -1,6 +1,6 @@
 import os from 'os';
 
-export async function getMyIP () {
+export function getMyIP () {
 	const networkInterfaces = os.networkInterfaces();
 
 	for (const networkInterface of Object.values(networkInterfaces)) {
