@@ -4,6 +4,7 @@ import { tryCreatingConfigFileWithUser } from "../user-create-config";
 export async function init () {
 	await tryCreatingConfigFileWithUser();
 
-	await workerAxiosInstance.post('/config/read');
+	const { data } = await workerAxiosInstance.post('/config/read');
+	console.log(data);
 	console.log('The worker thread should have everything running now.');
 }

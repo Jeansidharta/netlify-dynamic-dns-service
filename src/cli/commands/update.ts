@@ -7,7 +7,8 @@ export async function update (yargs: any) {
 
 	if (!hostname) {
 		console.log('Updating all records...');
-		await workerAxiosInstance.post('/update-now');
+		const { data } = await workerAxiosInstance.post('/update-now');
+		console.log(data);
 		console.log('Hostnames updated successfuly');
 		return;
 	}
@@ -25,6 +26,7 @@ export async function update (yargs: any) {
 	}
 
 	console.log(`Updating ${hostname}...`);
-	await workerAxiosInstance.post('/update-now/' + hostname);
+	const { data } = await workerAxiosInstance.post('/update-now/' + hostname);
+	console.log(data);
 	console.log(`${hostname} updated succesfuly!`);
 }

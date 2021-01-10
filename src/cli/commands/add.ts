@@ -10,6 +10,7 @@ export async function add (yargs: any) {
 
 	config.addToWhitelist(hostname);
 
-	await workerAxiosInstance.post('/config/read');
+	const { data } = await workerAxiosInstance.post('/config/read');
+	console.log(data);
 	console.log('Hostname added successfuly');
 }

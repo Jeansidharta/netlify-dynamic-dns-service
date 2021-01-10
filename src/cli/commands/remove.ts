@@ -15,6 +15,7 @@ export async function remove (yargs: any) {
 		return;
 	}
 
-	await workerAxiosInstance.post('/config/read');
+	const { data } = await workerAxiosInstance.post('/config/read');
+	console.log(data);
 	console.log('Hostname removed successfuly');
 }
