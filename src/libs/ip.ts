@@ -1,39 +1,23 @@
-import { isIPv4, isIPv6, isIP } from 'net';
-import fetch from 'node-fetch';
+import os from 'os';
 
-const IPV4_API_URL = 'https://v4.ident.me/.json';
-const IPV6_API_URL = 'https://v6.ident.me/.json';
-const IP_API_URL = 'https://ident.me/';
+export async function getMyIP () {
+	const networkInterfaces = os.networkInterfaces();
 
-export async function getMyIP (IPType?: 'IPV4' | 'IPV6') {
-	const apiUrl = (
-		IPType === 'IPV4' ? IPV4_API_URL :
-		IPType === 'IPV6' ? IPV6_API_URL :
-		IP_API_URL
-	);
+	for (const networkInterface of Object.values(networkInterfaces)) {
+		for (const { address, family, internal } of networkInterface!) {
+			// No IPv4 addresses.
+			if (family === 'IPv4') continue;
 
-	const response = await fetch(apiUrl).catch(() => {
-		throw new Error('Internet error at IP call');
-	});
+			// No internal addresses (e.g. 127.0.0.1 or ::1)
+			if (internal) continue;
 
-	if (!response.ok) {
-		throw new Error(`IP call STATUS CODE ${response.status}: ${response.statusText}`);
+			// IPv6 addresses that start with fe80 are link-local addresses.
+			// We want the global addresses.
+			if (address.startsWith('fe80')) continue;
+
+			return address;
+		}
 	}
 
-	const ip: string = await response.text().catch(() => {
-		throw new Error('Failed to parse IP response');
-	});
-
-	// Checks if the IP address is valid.
-	if (!ip) {
-		throw new Error(`IP address is empty`);
-	} else if (IPType === 'IPV4' && !isIPv4(ip)) {
-		throw new Error(`IP address '${ip}' should be an IPV4`);
-	} else if (IPType === 'IPV6' && !isIPv6(ip)) {
-		throw new Error(`IP address '${ip}' should be an IPV6`);
-	} else if (!IPType && !isIP(ip)) {
-		throw new Error(`IP address '${ip}' is invalid`);
-	}
-
-	return ip;
+	throw new Error('No valid IPv6 was found.');
 }

@@ -7,16 +7,16 @@ const app = express();
 app.use(express.json());
 
 setInterval(() => {
-	update('IPV6');
+	update();
 }, 1000 * 60 * 30);
-update('IPV6');
+update();
 
 app.post('/update-now', async (_req, res) => {
 	console.log('Updating now...');
 	if (!config.configFile) {
 		console.log('Config file does not exist. Ignoring update.');
 	} else {
-		await update('IPV6');
+		await update();
 	}
 	res.status(200).send();
 	return;

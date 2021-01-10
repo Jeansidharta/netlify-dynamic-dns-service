@@ -4,10 +4,10 @@ import { listDNS } from '../libs/netlify/list-dns';
 import { createDNS } from '../libs/netlify/create-dns';
 import { deleteDNS } from '../libs/netlify/delete-dns';
 
-export async function update (IPType: 'IPV4' | 'IPV6') {
+export async function update () {
 	console.log('Fetching my IP...');
-	const myIP = await getMyIP(IPType);
-	console.log(`My ${IPType || 'IP'} is ${myIP}`);
+	const myIP = await getMyIP();
+	console.log(`My IPv6 is ${myIP}`);
 	const dnsList = await listDNS();
 
 	/** determines which DNS records should be updated */
@@ -31,8 +31,7 @@ export async function update (IPType: 'IPV4' | 'IPV6') {
 
 	missingHostnames.forEach(async hostname => {
 		console.log(hostname + ' was missing. Creating...');
-		const type = IPType === 'IPV6' ? 'AAAA' : 'A';
-		await createDNS(myIP, hostname, type);
+		await createDNS(myIP, hostname, 'AAAA');
 		console.log(hostname + ' was created successfuly');
 	});
 }
