@@ -1,8 +1,9 @@
 let logs: string[] = [];
+let verbosity = 0;
 
-export function log (...messages: string[]) {
-	console.log(...messages);
-	logs = logs.concat(messages);
+export function log (message: string, commandVerbosity = 0) {
+	console.log(message);
+	if (commandVerbosity <= verbosity) logs.push(message);
 }
 
 export function getLogs () {
@@ -11,4 +12,8 @@ export function getLogs () {
 
 export function resetLogs () {
 	logs = [];
+}
+
+export function setVerbosity (newVerbosity: number) {
+	verbosity = newVerbosity;
 }

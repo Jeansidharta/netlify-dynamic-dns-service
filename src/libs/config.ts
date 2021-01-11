@@ -2,6 +2,7 @@ import path from 'path';
 import process from 'process';
 import { promises as fs, readFileSync, statSync, writeFileSync } from 'fs';
 import { ConfigurationFile } from '../models/config';
+import { log } from '../worker/logger';
 
 function getConfigFileLocation () {
 	return path.join(process.env.HOME as string, 'netlify-domains.json');
@@ -38,7 +39,7 @@ export function readConfigFile () {
 		// Read and parse the config file.
 		configFile = JSON.parse(readFileSync(configFileLocation, 'utf8'));
 	} catch (e) {
-		console.log('Failed to read or parse config file');
+		log('Failed to read or parse config file');
 	}
 }
 

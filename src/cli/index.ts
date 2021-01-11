@@ -7,51 +7,67 @@ import { add } from './commands/add';
 import { list } from './commands/list';
 import { init } from './commands/init';
 import { echoIP } from './commands/echo-ip';
+import { setVerbosity } from './verbosity';
 
-function preventDeath(handler: Function) {
-	return async (...args: any[]) => {
+function makeHandler(handler: Function) {
+	return async (yargs: any, ...args: any[]) => {
+		const verbosityLevel = Number(yargs.verbosity || 0);
+
+		if (isNaN(verbosityLevel) || !isFinite(verbosityLevel)) {
+			console.log('Invalid verbosity level.');
+			return;
+		}
+
+		setVerbosity(verbosityLevel);
 		try {
-			return await handler(...args);
+			return await handler(yargs, ...args);
 		} catch(e) {}
 	}
 }
 
 const { argv } = yargs
+	.option('verbosity', {
+		type: 'number',
+		alias: ['v', 'verbose'],
+		default: 0,
+		requiresArg: false,
+		description: 'The verbosity level of the command. Number. Default is 0. Higher numbers makes more verbosity. Lower numbers, less verbosity. A verbosity smaller than 0 is silent. Maximum verbosity level is 2.',
+	})
 	.command(
 		'update [hostname]',
 		'forces worker process to check for an update on all hostnames',
 		() => {},
-		preventDeath(update),
+		makeHandler(update),
 	)
 	.command(
 		['remove <hostname>', 'delete <hostname>'],
 		'removes a specific hostname',
 		() => {},
-		preventDeath(remove),
+		makeHandler(remove),
 	)
 	.command(
 		['init', 'start', 'initialize'],
 		'Initializes the configuration file',
 		() => {},
-		preventDeath(init),
+		makeHandler(init),
 	)
 	.command(
 		['add <hostname>', 'new <hostname>', 'create <hostname>'],
 		'adds a new hostname to sync',
 		() => {},
-		preventDeath(add),
+		makeHandler(add),
 	)
 	.command(
 		'list',
 		'removes a specific hostname',
 		() => {},
-		preventDeath(list),
+		makeHandler(list),
 	)
 	.command(
 		['ip'],
 		'Prints my current IPv6',
 		() => {},
-		preventDeath(echoIP),
+		makeHandler(echoIP),
 	)
 	.demandCommand(1, 1)
 	.strict()

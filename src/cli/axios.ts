@@ -1,5 +1,6 @@
 import axios from 'axios';
 import process from 'process';
+import { getVerbosity } from './verbosity';
 
 const workerProcessHostname = 'localhost';
 const workerProcessPort = Number(process.env.WORKER_PORT || 7777);
@@ -18,4 +19,15 @@ workerAxiosInstance.interceptors.response.use(undefined, (error) => {
 	}
 
 	return Promise.reject(error);
+});
+
+workerAxiosInstance.interceptors.request.use(config => {
+	const newConfig = {
+		...config,
+		params: {
+			...config.params,
+			verbosity: getVerbosity(),
+		},
+	};
+	return newConfig;
 });

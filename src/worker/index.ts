@@ -2,7 +2,7 @@ import express, { RequestHandler } from 'express';
 import { updateAllHostnames, updateSingleHostname } from './update';
 import * as config from '../libs/config';
 import process from 'process';
-import { getLogs, log, resetLogs } from './logger';
+import { getLogs, log, resetLogs, setVerbosity } from './logger';
 
 const PORT = Number(process.env.PORT || 7777);
 
@@ -16,9 +16,17 @@ setInterval(() => {
 updateAllHostnames();
 
 function loggableHandler (handler: RequestHandler) {
-	return (async (...args) => {
+	return (async (req, res, ...args) => {
+		const verbosityNumber = Number(req.query.verbosity || 0);
+		if (isNaN(verbosityNumber) || !isFinite(verbosityNumber)) {
+			res.status(400).send('Invalid verbosity number');
+			return;
+		}
+		setVerbosity(verbosityNumber);
 		try {
-			const v = await handler(...args);
+			resetLogs();
+			const v = await handler(req, res, ...args);
+			resetLogs();
 			return v;
 		} catch (e) {
 			console.log(e);
@@ -27,21 +35,18 @@ function loggableHandler (handler: RequestHandler) {
 }
 
 app.post('/update-now', loggableHandler(async (_req, res) => {
-	resetLogs();
-	log('Updating now...');
+	log('Updating now...', 2);
 	if (!config.configFile) {
 		log('Config file does not exist. Ignoring update.');
 	} else {
 		await updateAllHostnames();
 	}
 	res.status(200).send(getLogs().join('\n'));
-	resetLogs();
 	return;
 }));
 
 app.post('/update-now/:hostname', async (req, res) => {
-	resetLogs();
-	log('Updating now...');
+	log('Updating now...', 2);
 	if (!config.configFile) {
 		log('Config file does not exist. Ignoring update.');
 	} else {
@@ -53,16 +58,13 @@ app.post('/update-now/:hostname', async (req, res) => {
 		}
 	}
 	res.status(200).send(getLogs().join('\n'));
-	resetLogs();
 	return;
 });
 
 app.post('/config/read', async (_req, res) => {
-	resetLogs();
-	log('Reading config file...');
+	log('Reading config file...', 2);
 	config.readConfigFile();
 	res.status(200).send(getLogs().join('\n'));
-	resetLogs();
 	return;
 });
 

@@ -6,61 +6,61 @@ import { deleteDNS } from '../libs/netlify/delete-dns';
 import { log } from './logger';
 
 export async function updateSingleHostname (hostname: string) {
+	log(`Handling hostname '${hostname}':`, 1);
 
-	log(`Handling hostname '${hostname}':`);
-
-	log('Fetching my IP...');
+	log('Fetching my IP...', 2);
 	const myIP = getMyIP();
-	log(`My IPv6 is ${myIP}`);
+	log(`My IPv6 is ${myIP}`, 1);
 	const recordsList = await listDNS();
 	const record = recordsList.find(record => record.hostname === hostname && record.type === 'AAAA');
 
 	if (!record) {
-		log('Record did not exist. Creating...');
+		log('Record did not exist. Creating...', 2);
 		await createDNS(myIP, hostname);
-		log('Record created successfuly!');
+		log('Record created successfuly!', 2);
+		log(`A record for '${hostname}' did not exist. It was created.`);
 		return;
 	}
 
 	if (record.value === myIP) {
-		log('Record is up to date.');
+		log(`The record for '${hostname}' was already up to date.`);
 		return;
 	}
 
-	log('Record is outdated. Updating...');
+	log(`Record is outdated. Updating...`, 2);
 	await deleteDNS(record.id);
 	await createDNS(myIP, hostname);
 	log('Record updated successfuly!');
 }
 
 export async function updateAllHostnames () {
-	log('Fetching my IP...');
+	log('Fetching my IP...', 2);
 	const myIP = getMyIP();
-	log(`My IPv6 is ${myIP}`);
+	log(`My IPv6 is ${myIP}`, 1);
 	const dnsList = await listDNS();
 
 	/** determines which DNS records should be updated */
 	const dnsToUpdate = dnsList.filter(record => {
 		if (!isWhitelisted(record.hostname)) return false;
 		if (record.value === myIP) {
-			log(record.hostname + '\'s IP is up to date.');
+			log(`\t'${record.hostname}' was already up to date.`);
 			return false;
 		}
 		return true;
 	});
 
 	dnsToUpdate.forEach(async ({ hostname, id: recordId }) => {
-		log(hostname + '\'s IP is incorrect. Updating...');
+		log(hostname + '\'s IP is incorrect. Updating...', 2);
 		await deleteDNS(recordId);
 		await createDNS(myIP, hostname);
-		log(hostname + ' was successfuly updated');
+		log(`\t'${hostname}' was successfuly updated`);
 	});
 
 	const missingHostnames = getMissingWhitelistItems(dnsList.map(record => record.hostname));
 
 	missingHostnames.forEach(async hostname => {
-		log(hostname + ' was missing. Creating...');
+		log(`\t'${hostname}' was missing. Creating...`, 2);
 		await createDNS(myIP, hostname, 'AAAA');
-		log(hostname + ' was created successfuly');
+		log(`\t'${hostname}' was created successfuly`);
 	});
 }
