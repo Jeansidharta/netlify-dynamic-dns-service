@@ -6,7 +6,7 @@ export async function appendHostname (hostname: string) {
 	if (!configFile) await tryCreatingConfigFileWithUser();
 
 	if (!hostname.endsWith(configFile!.domainName)) {
-		const shouldAppendHostname = await askBooleanQuestion(`Your hostname seems not to end with the hostname you own: '${configFile!.domainName}'. Would you like to append it to the hostname you provided?`);
+		const shouldAppendHostname = await askBooleanQuestion(`The specified hostname must end with the hostname you own: '${configFile!.domainName}'. Would you like me to append it to the hostname you provided? It'll look like this: ${hostname}.${configFile!.domainName}`);
 		if (shouldAppendHostname) {
 			if (hostname.endsWith('.') || !hostname) return hostname + configFile!.domainName;
 			return hostname + '.' + configFile!.domainName;

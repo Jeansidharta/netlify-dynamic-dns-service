@@ -18,10 +18,10 @@ export async function askQuestion (question: string) {
 }
 
 export async function askBooleanQuestion (question: string, defaultAnswer = false) {
-	const answer = await askQuestion(question + '(Y or N) ');
+	const answer = await askQuestion(question.trim() + ' (Y or N) ');
 	const lowercase = answer.trim().toLowerCase();
 
-	if (lowercase === 'y' || lowercase === 'yes') return true;
+	if (lowercase === 'y' || lowercase === 'yes' || lowercase === 'ye') return true;
 	if (lowercase === 'n' || lowercase === 'no') return false;
 
 	console.log(`Unrecognized answer. Defaulting to ${defaultAnswer ? 'Y' : 'N'}.`);

@@ -59,7 +59,7 @@ const { argv } = yargs
 	)
 	.command(
 		'list',
-		'removes a specific hostname',
+		'Lists registered hostnames',
 		() => {},
 		makeHandler(list),
 	)

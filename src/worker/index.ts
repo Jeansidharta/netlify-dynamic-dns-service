@@ -11,9 +11,13 @@ const app = express();
 app.use(express.json());
 
 setInterval(() => {
-	updateAllHostnames();
+	if (!config.configFile) {
+		log('Config file does not exist. Ignoring automatic update.');
+	} else {
+		updateAllHostnames();
+	}
 }, 1000 * 60 * 30);
-updateAllHostnames();
+if (config.configFile) updateAllHostnames();
 
 function loggableHandler (handler: RequestHandler) {
 	return (async (req, res, ...args) => {
@@ -45,7 +49,7 @@ app.post('/update-now', loggableHandler(async (_req, res) => {
 	return;
 }));
 
-app.post('/update-now/:hostname', async (req, res) => {
+app.post('/update-now/:hostname', loggableHandler(async (req, res) => {
 	log('Updating now...', 2);
 	if (!config.configFile) {
 		log('Config file does not exist. Ignoring update.');
@@ -59,14 +63,14 @@ app.post('/update-now/:hostname', async (req, res) => {
 	}
 	res.status(200).send(getLogs().join('\n'));
 	return;
-});
+}));
 
-app.post('/config/read', async (_req, res) => {
+app.post('/config/read', loggableHandler(async (_req, res) => {
 	log('Reading config file...', 2);
 	config.readConfigFile();
 	res.status(200).send(getLogs().join('\n'));
 	return;
-});
+}));
 
 app.listen(PORT, () => {
 	console.log(`Listening on port ${PORT} for commands...`);

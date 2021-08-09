@@ -93,3 +93,8 @@ export async function removeFromWhitelist (hostname: string) {
 	configFile.whitelist.splice(hostnameIndex, 1);
 	await updateConfigFile();
 }
+
+export function getDnsZone () {
+	if (!configFile) throw new Error('Config file does not exist.');
+	return configFile.domainName.replace(/\./g, '_');
+}

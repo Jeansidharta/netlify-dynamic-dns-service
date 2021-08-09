@@ -1,24 +1,26 @@
 import { workerAxiosInstance } from '../axios';
 import * as config from '../../libs/config';
 import { tryCreatingConfigFileWithUser } from '../user-create-config';
+import { appendHostname } from '../append-hostname';
 
 export async function update (yargs: any) {
 	const hostname = yargs.hostname as string | undefined;
 
-	if (!hostname) {
-		console.log('Updating all records...');
-		const { data } = await workerAxiosInstance.post('/update-now');
-		console.log(data);
-		console.log('Hostnames updated successfuly');
-		return;
-	}
+	if (!hostname) await updateAllHostnames();
+	else await updateSingleHostname(hostname);
+}
 
+async function updateAllHostnames () {
+	console.log('Updating all records...');
+	const { data } = await workerAxiosInstance.post('/update-now');
+	console.log(data);
+	console.log('Hostnames updated successfuly');
+	return;
+}
+
+async function updateSingleHostname (rawHostname: string) {
 	if (!config.configFile) await tryCreatingConfigFileWithUser();
-
-	if (!hostname.endsWith(config.configFile!.domainName)) {
-		console.log(`The requested hostname does not end with the configured domain name '${config.configFile!.domainName}'. Will not continue operation.`);
-		return;
-	}
+	let hostname = await appendHostname(rawHostname);
 
 	if (!config.isWhitelisted(hostname)) {
 		console.log(`The requested hostname is not in the 'to update' list. Will not continue operation.`);
